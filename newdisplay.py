@@ -20,7 +20,7 @@ def safe_exit(signum, frame):
 #################
 class DataGrab():
   def get_temp():
-    """Get raspi temp from sensors output."""
+    """Return Raspberry Pi temp from lm_sensors output."""
     result = subprocess.check_output('sensors').decode('utf-8')
     for line in result.split('\n'):
       if 'temp1' in line:
@@ -28,7 +28,7 @@ class DataGrab():
         return restemp[0]
 
   def get_ping(address, port):
-    """Grab server status from netcat response code."""
+    """Returns a string indicating server status from netcat response code."""
     response = subprocess.run(['nc', '-vz', '-w', '5', address, str(port)], stderr=subprocess.DEVNULL).returncode
     if response == 0:
       return 'Online'
@@ -36,7 +36,7 @@ class DataGrab():
       return 'Offline'
 
   def get_ram():
-    """Get raspi free memory in megabytes."""
+    """Return a tuple with total memory and free memory."""
     result = subprocess.check_output(['free', '--mega']).decode('utf-8')
     for line in result.split('\n'):
       if 'Mem' in line: 
@@ -44,16 +44,24 @@ class DataGrab():
         return (int(resmem[2]), int(resmem[1]))
 
   def get_time():
-    """Get date and time."""
+    """Returns current date and time.
+    
+    Example of formatting: 10:26 PM | Oct15
+    """
     return datetime.now().strftime('%I:%M %p | %b%-d')
     
   def get_pic_count():
-    """Get number of timelapse pictures from directory."""
+    """Returns number of timelapse pictures from directory."""
     result = subprocess.check_output(['ls', '-1', '/mnt/dietpi_userdata/webcam']).decode('utf-8').count('\n')
     return result
 
   def get_ban_count():
-    """Curl the number of banned clients in fail2ban from my server."""
+    """Curls data from a web server.
+    
+    My use for this is to get the number of banned IPs from fail2ban on my own server.
+    
+    TODO: make this more flexible -- curl a file passed in via variable
+    """
     try:
       result = subprocess.check_output(['curl', 'http://sleepyarchimedes.com:1234/files/scriptfiles/bancount.log', '--connect-timeout', '5'], stderr=subprocess.DEVNULL).decode('utf-8')
     except subprocess.CalledProcessError:
@@ -81,6 +89,7 @@ class Server:
     self.sock.bind(address_tuple)
 
   def run_server(self):
+    """Run the server."""
     self.sock.listen(20)
     print("Waiting...")
     while True:
@@ -96,8 +105,9 @@ class Server:
           print("Original data: " + decoded)
 
   def close_server(self):
+    """Close the server's socket."""
     self.sock.close()
-    print("Shutting down server and quitting...")
+    print("Shutting down server...")
 
 
 ######## 
@@ -143,5 +153,6 @@ if __name__ == '__main__':
   except KeyboardInterrupt:
       pass
   finally:
+    # close server and clear the LCD
     server.close_server()
     lcd.clear()
