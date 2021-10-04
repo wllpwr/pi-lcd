@@ -6,6 +6,8 @@ This program utilizes the [rpi-lcd](https://pypi.org/project/rpi-lcd/) library t
 
 There's a few things built-in already with ```subprocess``` -- ping, RPi temp and memory, and others.
 
+```newdisplay.py``` and ```pythoninterfacing.ino``` contain the server Python code and client Arduino code respectively.
+
 ## schematics
 
 coming soon
