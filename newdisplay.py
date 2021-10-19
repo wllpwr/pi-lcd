@@ -159,10 +159,10 @@ if __name__ == '__main__':
                     
             dataAge = dataAge + 1
 
-            # for i in range(5):
-            #     lcd.text('Timelapse Count', 1)
-            #     lcd.text(str(DataGrab.get_pic_count()) + ' images', 2)
-            #     time.sleep(1.5)
+            for i in range(5):
+                lcd.text('Timelapse Count', 1)
+                lcd.text(str(DataGrab.get_pic_count()) + ' images', 2)
+                time.sleep(1.5)
 
     except KeyboardInterrupt:
         pass
